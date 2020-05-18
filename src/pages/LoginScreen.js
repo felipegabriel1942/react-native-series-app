@@ -43,22 +43,46 @@ export default class LoginScreen extends React.Component {
         this.setState({ isLoading: true, message: '' });
         const { email, password } = this.state;
 
+        const loginUserSucess = user => {
+            this.setState({ message: 'Sucesso!'});
+        }
+
+        const loginUserFailed = error => {
+            this.setState({
+                message: this.getMessageByErrorCode(error.code)
+            });
+        }
+
         firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
-            .then(user => {
-                this.setState({ message: 'Sucesso!' });
-            })
+            .then(loginUserSucess)
             .catch(error => {
                 if(error.code === 'auth/user-not-found') {
                     Alert.alert(
-                        'Usuário não encontrado'
-                        )
-                }
+                        'Usuário não encontrado',
+                        'Desenha criar um cadastro com as informações inseridas?',
+                        [
+                            {
+                                text: 'Não'
 
-                this.setState({ 
-                    message: this.getMessageByErrorCode(error.code) 
-                });
+                            }, {
+                                text: 'Sim',
+                                onPress: () => {
+                                    firebase
+                                        .auth()
+                                        .createUserWithEmailAndPassword(email, password)
+                                        .then(loginUserSucess)
+                                        .catch(loginUserFailed);
+                                }
+
+                            }
+                        ],
+                        {cancelable : false}
+                    );
+                } else {
+                    loginUserFailed
+                }                
             })
             .then(() =>this.setState({isLoading: false}) );
     }
