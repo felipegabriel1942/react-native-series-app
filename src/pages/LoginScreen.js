@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, Button, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
 import  firebase  from 'firebase';
 import '@firebase/auth';
  
@@ -13,7 +13,8 @@ export default class LoginScreen extends React.Component {
         this.state = {
             email: '',
             password: '',
-            isLoading: false
+            isLoading: false,
+            message: ''
         }
     }
 
@@ -39,20 +40,50 @@ export default class LoginScreen extends React.Component {
     }
 
     login() {
-        this.setState({isLoading: true});
-
+        this.setState({ isLoading: true, message: '' });
         const { email, password } = this.state;
 
         firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then(user => {
-                console.log('Usuário autenticado');
+                this.setState({ message: 'Sucesso!' });
             })
             .catch(error => {
-                console.log('Usuário não autenticado');
+                if(error.code === 'auth/user-not-found') {
+                    Alert.alert(
+                        'Usuário não encontrado'
+                        )
+                }
+
+                this.setState({ 
+                    message: this.getMessageByErrorCode(error.code) 
+                });
             })
             .then(() =>this.setState({isLoading: false}) );
+    }
+
+    getMessageByErrorCode(errorCode) {
+        switch(errorCode) {
+            case 'auth/wrong-password':
+                return 'Senha incorreta';
+            case 'auth/user-not-found':
+                return 'Usuário não encontrado';
+            default:
+                return 'Erro desconhecido';
+        }
+    }
+
+    renderMessage() {
+        const { message } = this.state;
+
+        if (!message) {
+            return null;
+        } else {
+            return <View>
+                        <Text>{ message }</Text>
+                    </View>
+        }
     }
 
     renderButton() {
@@ -89,6 +120,7 @@ export default class LoginScreen extends React.Component {
                 </FormRow>
 
                 { this.renderButton() }
+                { this.renderMessage() }
 
             </View>
         )
