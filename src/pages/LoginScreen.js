@@ -2,10 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
 import  firebase  from 'firebase';
 import '@firebase/auth';
+
+import { connect } from 'react-redux';
+
+import { tryLogin } from '../actions/_index';
  
 import FormRow from '../components/FormRow';
 
-export default class LoginScreen extends React.Component {
+class LoginScreen extends React.Component {
 
     constructor(props) {
         super(props);
@@ -43,48 +47,11 @@ export default class LoginScreen extends React.Component {
         this.setState({ isLoading: true, message: '' });
         const { email, password } = this.state;
 
-        const loginUserSucess = user => {
-            this.setState({ message: 'Sucesso!'});
-        }
-
-        const loginUserFailed = error => {
-            this.setState({
-                message: this.getMessageByErrorCode(error.code)
+        this.props.tryLogin({email, password})
+            .then(() => {
+                this.setState({ message: 'Sucesso!'});
+                this.props.navigation.replace('Main');
             });
-        }
-
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(loginUserSucess)
-            .catch(error => {
-                if(error.code === 'auth/user-not-found') {
-                    Alert.alert(
-                        'Usuário não encontrado',
-                        'Desenha criar um cadastro com as informações inseridas?',
-                        [
-                            {
-                                text: 'Não'
-
-                            }, {
-                                text: 'Sim',
-                                onPress: () => {
-                                    firebase
-                                        .auth()
-                                        .createUserWithEmailAndPassword(email, password)
-                                        .then(loginUserSucess)
-                                        .catch(loginUserFailed);
-                                }
-
-                            }
-                        ],
-                        {cancelable : false}
-                    );
-                } else {
-                    loginUserFailed
-                }                
-            })
-            .then(() =>this.setState({isLoading: false}) );
     }
 
     getMessageByErrorCode(errorCode) {
@@ -160,3 +127,5 @@ const styles = StyleSheet.create({
         paddingBottom: 5
     }
 });
+
+export default connect(null, { tryLogin } || { actionCreator})(LoginScreen)
