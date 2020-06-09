@@ -18,32 +18,34 @@ export const tryLogin = ({email, password}) => dispatch => {
         .then(user => {
             const action = userLoginSuccess(user);
             dispatch(action);
+            return user;
         })
         .catch(error => {
             if(error.code === 'auth/user-not-found') {
-                Alert.alert(
-                    'Usuário não encontrado',
-                    'Desenha criar um cadastro com as informações inseridas?',
-                    [
-                        {
-                            text: 'Não'
-                        },
-                        {
-                            text: 'Sim',
-                            onPress: () => {
-                                firebase
-                                    .auth()
-                                    .createUserWithEmailAndPassword(email, password)
-                                    .then(loginUserSucess)
-                                    .catch(loginUserFailed);
+                return new Promise((resolve, reject) => {
+                    Alert.alert(
+                        'Usuário não encontrado',
+                        'Desenha criar um cadastro com as informações inseridas?',
+                        [
+                            {
+                                text: 'Não',
+                                onPress: () => resolve(),
+                            },
+                            {
+                                text: 'Sim',
+                                onPress: () => {
+                                    firebase
+                                        .auth()
+                                        .createUserWithEmailAndPassword(email, password)
+                                        .then(resolve)
+                                        .catch(reject);
+                                }
                             }
-                        }
-                    ],
-                    {cancelable : false}
-                );
-            } else {
-                loginUserFailed
-            }                
-        })
-        .then(() =>this.setState({isLoading: false}));
+                        ],
+                        {cancelable: false}
+                    );
+                });
+            }
+            return Promise.reject(error.code);         
+        });
 }
