@@ -83,7 +83,7 @@ class LoginScreen extends React.Component {
         if (!message) {
             return null;
         } else {
-            return <View>
+            return  <View>
                         <Text>{ message }</Text>
                     </View>
         }

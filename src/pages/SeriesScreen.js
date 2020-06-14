@@ -15,7 +15,8 @@ const SeriesScreen = props => (
             renderItem={({ item, index }) => (
                 item.isLast 
                     ? <AddSerieCard
-                        isFirstColumn={isEven(index)}></AddSerieCard>
+                        isFirstColumn={isEven(index)}
+                        onNavigate={() => props.navigation.navigate('SerieForm')}></AddSerieCard>
                     : <SerieCard 
                         serie={item}
                         isFirstColumn={isEven(index)}
