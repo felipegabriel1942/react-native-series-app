@@ -1,19 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList} from 'react-native';
-import SerieCard from '../components/SerieCard';
+import { View, StyleSheet, FlatList} from 'react-native';
 
 import series from '../../series.json';
+
+import SerieCard from '../components/SerieCard';
+import AddSerieCard from '../components/AddSerieCard';
 
 const isEven = number => number% 2 === 0;
 
 const SeriesScreen = props => (
     <View>
         <FlatList
-            data={series}
+            data={[...series, { isLast: true }]}
             renderItem={({ item, index }) => (
-                <SerieCard 
-                    serie={item}
-                    isFirstColumn={isEven(index)} />
+                item.isLast 
+                    ? <AddSerieCard
+                        isFirstColumn={isEven(index)}></AddSerieCard>
+                    : <SerieCard 
+                        serie={item}
+                        isFirstColumn={isEven(index)}
+                        onNavigate={() => props.navigation.navigate('SerieDetail', { serie: item })} />
             )}
             keyExtractor={item => item.id}
             numColumns={2}
@@ -31,7 +37,7 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     marginBottom: {
-        marginBottom: 5
+        marginBottom: 15
     }
 });
 

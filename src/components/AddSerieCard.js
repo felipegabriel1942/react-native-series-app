@@ -2,21 +2,21 @@ import React from 'react';
 
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
 
-const SerieCard = ({ serie, isFirstColumn, onNavigate }) => (
+const AddSerieCard = ({ serie, isFirstColumn, onNavigate }) => (
 
     <TouchableOpacity 
         style={[styles.container, isFirstColumn ? styles.firstColumn : styles.lastColumn]}
         onPress={onNavigate}>
-        <View style={styles.card}>
-            <Image 
+        <View style={styles.card}>{
+            /*<Image 
                 source={{
                     uri: serie.img
                 }}
                 aspectRatio={1}
-                resizeMode="cover"/>
-            <View style={styles.cartTitleWrapper}>
-                <Text style={styles.cardTitle}>{serie.title}</Text>
-            </View>
+                resizeMode="cover"/>*/
+            }
+            
+            <View><Text>Botão</Text></View>
         </View>
     </TouchableOpacity>
 );
@@ -56,4 +56,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SerieCard;
+export default AddSerieCard;
