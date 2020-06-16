@@ -6,3 +6,8 @@ export const setField = (field, value) => {
         value 
     }
 }
+
+export const SAVE_SERIE = 'SAVE_SERIE'
+export const saveSerie = serie => {
+    console.log(serie)
+}

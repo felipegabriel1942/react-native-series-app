@@ -8,6 +8,12 @@ import SeriesFormScreen from './pages/SeriesFormScreen';
 
 const AppNavigator = createStackNavigator({
   
+  'Login': {
+    screen: LoginScreen,
+    navigationOptions: {
+      title: 'Bem vindo!'
+    }
+  },
   'Main': {
     screen: SeriesScreen
   },
@@ -25,12 +31,6 @@ const AppNavigator = createStackNavigator({
     screen: SeriesFormScreen,
     navigationOptions: {
       title: 'Nova série!'
-    }
-  }, 
-  'Login': {
-    screen: LoginScreen,
-    navigationOptions: {
-      title: 'Bem vindo!'
     }
   }
 }, { 
